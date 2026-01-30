@@ -1,0 +1,128 @@
+body {
+    background-color: #0b0c10;
+    color: #c5c6c7;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    overflow: hidden;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+}
+
+.top-bar { flex: 1; display: flex; justify-content: center; align-items: center; }
+.mid-bar { flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 0 50px; }
+.bottom-bar { flex: 1.5; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; }
+
+.enemy-area { text-align: center; width: 300px; }
+.sprite { width: 100px; height: 100px; margin: 0 auto; background: #e74c3c; box-shadow: 0 0 20px #e74c3c; border-radius: 10px; }
+.hp-bar { width: 100%; height: 15px; background: #333; margin: 10px 0; border: 1px solid #666; }
+.fill { height: 100%; transition: width 0.3s; }
+.enemy-fill { background: #e74c3c; }
+.player-fill { background: #66fcf1; }
+
+.intent-box {
+    margin-top: 10px;
+    padding: 5px;
+    border: 1px dashed #e74c3c;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.log-panel {
+    width: 300px;
+    height: 150px;
+    border: 1px solid #45a29e;
+    padding: 10px;
+    background: #1f2833;
+    overflow: hidden;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+.player-stats { text-align: center; width: 250px; }
+.energy-orb {
+    font-size: 1.5rem;
+    color: #66fcf1;
+    text-shadow: 0 0 10px #66fcf1;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.end-turn-btn {
+    padding: 20px 40px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 5px;
+}
+.end-turn-btn:hover { background: #c0392b; }
+
+.hand-area { display: flex; gap: 10px; justify-content: center; width: 100%; }
+
+.card {
+    width: 140px;
+    height: 200px;
+    background: #1f2833;
+    border: 2px solid #66fcf1;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.2s;
+    user-select: none;
+}
+.card:hover { transform: translateY(-30px) scale(1.1); z-index: 10; }
+.card.unplayable { opacity: 0.5; cursor: not-allowed; border-color: #555; }
+
+.card-cost {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 30px;
+    height: 30px;
+    background: #66fcf1;
+    color: #0b0c10;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.card-name {
+    text-align: center;
+    margin-top: 30px;
+    font-weight: bold;
+    color: #fff;
+}
+.card-desc {
+    padding: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 20px;
+    color: #c5c6c7;
+}
+
+.card.attack { border-color: #e74c3c; }
+.card.block { border-color: #66fcf1; }
+.card.special { border-color: #f1c40f; }
+
+.deck-piles { position: absolute; left: 20px; bottom: 20px; color: #666; }
+
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+.hidden { display: none; }
