@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Neon Deck</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="game-container">
+
+        <div class="top-bar">
+            <div class="enemy-area">
+                <div class="sprite enemy-sprite"></div>
+                <div class="stats">
+                    <h2 id="enemy-name">Cyber-Lich</h2>
+                    <div class="hp-bar"><div id="enemy-hp-bar" class="fill enemy-fill"></div></div>
+                    <p>HP: <span id="enemy-hp-text">80</span> | ARMOR: <span id="enemy-armor">0</span></p>
+                    <div class="intent-box">
+                        ⚠️ INTENT: <span id="enemy-intent">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mid-bar">
+            <div class="log-panel" id="log-panel"></div>
+            <div class="player-stats">
+                <h2>PLAYER</h2>
+                <div class="hp-bar"><div id="player-hp-bar" class="fill player-fill"></div></div>
+                <p>HP: <span id="player-hp-text">50</span> | ARMOR: <span id="player-armor">0</span></p>
+                <div class="energy-orb">
+                    ENERGY: <span id="player-energy">3</span>/3
+                </div>
+            </div>
+            <button class="end-turn-btn" onclick="endTurn()">END TURN</button>
+        </div>
+
+        <div class="bottom-bar">
+            <div class="deck-piles">
+                <div class="pile">Deck: <span id="deck-count">10</span></div>
+                <div class="pile">Discard: <span id="discard-count">0</span></div>
+            </div>
+            <div class="hand-area" id="hand-area"></div>
+        </div>
+
+        <div id="game-over-modal" class="modal hidden">
+            <h1 id="result-text">GAME OVER</h1>
+            <button onclick="window.location.reload()">REBOOT SYSTEM</button>
+        </div>
+    </div>
+
+    <script>
+        async function playCard(id) {
+            const res = await fetch('/play_card', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({card_id: id})
+            });
+            updateUI(await res.json());
+        }
+
+        async function endTurn() {
+            const res = await fetch('/end_turn', {method: 'POST'});
+            updateUI(await res.json());
+        }
+
+        function updateUI(data) {
+            document.getElementById('enemy-hp-text').innerText = data.enemy.hp;
+            document.getElementById('enemy-armor').innerText = data.enemy.armor;
+            document.getElementById('enemy-intent').innerText = data.enemy_intent.desc;
+            const eHp = (data.enemy.hp / data.enemy.max_hp) * 100;
+            document.getElementById('enemy-hp-bar').style.width = eHp + '%';
+
+            document.getElementById('player-hp-text').innerText = data.player.hp;
+            document.getElementById('player-armor').innerText = data.player.armor;
+            document.getElementById('player-energy').innerText = data.player.energy;
+            const pHp = (data.player.hp / data.player.max_hp) * 100;
+            document.getElementById('player-hp-bar').style.width = pHp + '%';
+
+            document.getElementById('deck-count').innerText = data.deck_count;
+            document.getElementById('discard-count').innerText = data.discard_count;
+
+            const handDiv = document.getElementById('hand-area');
+            handDiv.innerHTML = '';
+            data.hand.forEach(card => {
+                const cEl = document.createElement('div');
+                cEl.className = `card ${card.type}`;
+                if (data.player.energy < card.cost) cEl.classList.add('unplayable');
+                cEl.onclick = () => playCard(card.id);
+                cEl.innerHTML = `
+                    <div class="card-cost">${card.cost}</div>
+                    <div class="card-name">${card.name}</div>
+                    <div class="card-desc">${card.desc}</div>
+                `;
+                handDiv.appendChild(cEl);
+            });
+
+            const logDiv = document.getElementById('log-panel');
+            logDiv.innerHTML = data.log.map(l => `<div>> ${l}</div>`).join('');
+
+            if (data.game_over) {
+                document.getElementById('game-over-modal').classList.remove('hidden');
+            }
+        }
+
+        window.onload = () => fetch('/play_card', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({card_id: -1})
+        }).then(r => r.json()).then(updateUI);
+    </script>
+</body>
+</html>
