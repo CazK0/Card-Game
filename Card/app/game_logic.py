@@ -31,6 +31,7 @@ def generate_deck():
     deck.append(create_card(cid, "Hack", 2, "special", 8, "Deal 8 DMG + Heal 2"))
     cid += 1
     deck.append(create_card(cid, "Overclock", 0, "buff", 2, "Gain 2 Energy"))
+    cid += 1
 
     random.shuffle(deck)
     return deck
@@ -38,19 +39,15 @@ def generate_deck():
 
 def get_enemy_intent():
     actions = [
-        {'type': 'attack', 'value': 6, 'desc': 'Quick Beam (6 DMG)'},
-        {'type': 'attack', 'value': 9, 'desc': 'Charged Shot (9 DMG)'},
-        {'type': 'defend', 'value': 8, 'desc': 'Firewall (Gain 8 Armor)'},
+        {'type': 'attack', 'value': 5, 'desc': 'Quick Beam (5 DMG)'},
+        {'type': 'attack', 'value': 8, 'desc': 'Charged Shot (8 DMG)'},
+        {'type': 'defend', 'value': 6, 'desc': 'Firewall (Gain 6 Armor)'},
         {'type': 'buff', 'value': 0, 'desc': 'Scanning (No Action)'}
     ]
     return random.choice(actions)
 
 
-def draw_cards(session, count):
-    deck = session['deck']
-    hand = session['hand']
-    discard = session['discard']
-
+def process_draw(deck, hand, discard, count):
     for _ in range(count):
         if not deck:
             if not discard: break
@@ -61,6 +58,4 @@ def draw_cards(session, count):
         if deck:
             hand.append(deck.pop(0))
 
-    session['deck'] = deck
-    session['hand'] = hand
-    session['discard'] = discard
+    return deck, hand, discard
