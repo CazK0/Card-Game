@@ -7,14 +7,17 @@
 </head>
 <body>
     <div class="game-container">
-
         <div class="top-bar">
             <div class="enemy-area">
                 <div class="sprite enemy-sprite"></div>
                 <div class="stats">
                     <h2 id="enemy-name">Cyber-Lich</h2>
                     <div class="hp-bar"><div id="enemy-hp-bar" class="fill enemy-fill"></div></div>
-                    <p>HP: <span id="enemy-hp-text">80</span> | ARMOR: <span id="enemy-armor">0</span></p>
+                    <p>HP: <span id="enemy-hp-text">60</span> | ARMOR: <span id="enemy-armor">0</span></p>
+                    <div class="status-row">
+                        <span id="status-glitch" class="status-badge glitch hidden">GLITCH: 0</span>
+                        <span id="status-lag" class="status-badge lag hidden">LAG: 0</span>
+                    </div>
                     <div class="intent-box">
                         ⚠️ INTENT: <span id="enemy-intent">Loading...</span>
                     </div>
@@ -70,6 +73,17 @@
             document.getElementById('enemy-intent').innerText = data.enemy_intent.desc;
             const eHp = (data.enemy.hp / data.enemy.max_hp) * 100;
             document.getElementById('enemy-hp-bar').style.width = eHp + '%';
+
+            const glitch = data.enemy.status.glitch;
+            const lag = data.enemy.status.lag;
+            const glitchEl = document.getElementById('status-glitch');
+            const lagEl = document.getElementById('status-lag');
+
+            glitchEl.innerText = `GLITCH: ${glitch}`;
+            glitch > 0 ? glitchEl.classList.remove('hidden') : glitchEl.classList.add('hidden');
+
+            lagEl.innerText = `LAG: ${lag}`;
+            lag > 0 ? lagEl.classList.remove('hidden') : lagEl.classList.add('hidden');
 
             document.getElementById('player-hp-text').innerText = data.player.hp;
             document.getElementById('player-armor').innerText = data.player.armor;
