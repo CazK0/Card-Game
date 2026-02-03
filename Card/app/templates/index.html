@@ -7,17 +7,21 @@
 </head>
 <body>
     <div class="game-container">
+
         <div class="top-bar">
+            <div class="level-indicator">FLOOR <span id="floor-num">1</span>/4</div>
             <div class="enemy-area">
                 <div class="sprite enemy-sprite"></div>
                 <div class="stats">
-                    <h2 id="enemy-name">Cyber-Lich</h2>
+                    <h2 id="enemy-name">Loading...</h2>
                     <div class="hp-bar"><div id="enemy-hp-bar" class="fill enemy-fill"></div></div>
-                    <p>HP: <span id="enemy-hp-text">60</span> | ARMOR: <span id="enemy-armor">0</span></p>
+                    <p>HP: <span id="enemy-hp-text">--</span> | ARMOR: <span id="enemy-armor">0</span></p>
+
                     <div class="status-row">
                         <span id="status-glitch" class="status-badge glitch hidden">GLITCH: 0</span>
                         <span id="status-lag" class="status-badge lag hidden">LAG: 0</span>
                     </div>
+
                     <div class="intent-box">
                         ⚠️ INTENT: <span id="enemy-intent">Loading...</span>
                     </div>
@@ -68,9 +72,13 @@
         }
 
         function updateUI(data) {
+            document.getElementById('floor-num').innerText = data.level;
+
+            document.getElementById('enemy-name').innerText = data.enemy.name;
             document.getElementById('enemy-hp-text').innerText = data.enemy.hp;
             document.getElementById('enemy-armor').innerText = data.enemy.armor;
             document.getElementById('enemy-intent').innerText = data.enemy_intent.desc;
+
             const eHp = (data.enemy.hp / data.enemy.max_hp) * 100;
             document.getElementById('enemy-hp-bar').style.width = eHp + '%';
 
@@ -113,7 +121,12 @@
             logDiv.innerHTML = data.log.map(l => `<div>> ${l}</div>`).join('');
 
             if (data.game_over) {
-                document.getElementById('game-over-modal').classList.remove('hidden');
+                const modal = document.getElementById('game-over-modal');
+                const title = document.getElementById('result-text');
+                title.innerText = data.result;
+                if(data.result === 'VICTORY') title.style.color = '#66fcf1';
+                else title.style.color = '#e74c3c';
+                modal.classList.remove('hidden');
             }
         }
 
